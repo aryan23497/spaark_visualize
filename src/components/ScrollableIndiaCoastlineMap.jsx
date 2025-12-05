@@ -1,29 +1,6 @@
 // ScrollableIndiaCoastlineMap.jsx
 // A React component (Tailwind + react-leaflet) that renders a map tightly focused on
-// India's coastal perimeter. This version removes the horizontal-scrolling strip and
-// constrains the view to the Indian coastline using Leaflet `maxBounds` and `minZoom`.
-
-/*
-Prerequisites (install in your project):
-
-npm install react-leaflet leaflet prop-types
-
-Add Leaflet CSS once (e.g. in index.css or App.css):
-@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
-
-or in your HTML head:
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-Usage:
-import ScrollableIndiaCoastlineMap from './components/ScrollableIndiaCoastlineMap';
-
-<ScrollableIndiaCoastlineMap height="480px" />
-
-Notes:
-- This component is intentionally *not* horizontally scrollable. The map fills the container
-  and is constrained to India's coastal bounds.
-- Tweak INDIA_BOUNDS, MIN_ZOOM and MAX_ZOOM to adjust how much users can zoom or pan.
-*/
+// India's coastal perimeter. This version is zoomed-in to show India more closely.
 
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
@@ -32,11 +9,18 @@ import L from 'leaflet';
 
 const createIcon = (color = '#2dd4bf') => {
   const svg = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="12" cy="12" r="6" fill="${color}" />
     </svg>`;
-  return L.divIcon({ className: 'custom-coast-marker', html: svg, iconSize: [14, 14], iconAnchor: [7, 7] });
+  
+  return L.divIcon({
+    className: 'custom-coast-marker',
+    html: svg,
+    iconSize: [36, 36],     // bigger icon
+    iconAnchor: [18, 18]    // center the marker
+  });
 };
+
 
 // MapSetup applies maxBounds and optional minZoom when the map instance becomes available.
 function MapSetup({ bounds, minZoom }) {
@@ -46,7 +30,7 @@ function MapSetup({ bounds, minZoom }) {
     try {
       if (bounds) {
         map.setMaxBounds(bounds);
-        map.options.maxBoundsViscosity = 0.9;
+        map.options.maxBoundsViscosity = 0.95;
         // fit to bounds on first load so the map shows the coastal area tightly
         map.fitBounds(bounds, { padding: [20, 20] });
       }
@@ -76,13 +60,14 @@ export default function ScrollableIndiaCoastlineMap({ height = '480px' }) {
     { name: 'Kolkata', lat: 22.5726, lng: 88.3639 }
   ];
 
-  // Bounds roughly covering India's coastal perimeter (southwest lat/lng, northeast lat/lng)
-  // Adjust these if you want to include/exclude island groups.
-  const INDIA_BOUNDS = [[6.0, 68.0], [24.8, 97.8]]; // [southWest, northEast]
+  // Tightened bounds to focus on India more closely and avoid Myanmar
+  // Format: [southWest, northEast] -> [lat, lng]
+  const INDIA_BOUNDS = [[6.5, 78.0], [27.5, 85.0]];
 
-  const initialCenter = [17.5, 76.0];
-  const initialZoom = 5;
-  const MIN_ZOOM = initialZoom; // cannot zoom out beyond this
+  // Center and zoom tuned for a zoomed-in India view
+  const initialCenter = [22.0, 80.0];
+  const initialZoom = 6;   // closer initial zoom
+  const MIN_ZOOM = 5;      // allow slight zoom out, but not too far
   const MAX_ZOOM = 12;
 
   const handleMapCreated = (map) => {
@@ -97,7 +82,7 @@ export default function ScrollableIndiaCoastlineMap({ height = '480px' }) {
         </h3>
         <div className="text-xs" style={{ color: '#94a3b8' }}>Map is constrained to India's coastal perimeter — you can pan and zoom in only.</div>
       </div>
-<br></br>
+
       <div style={{ width: '100%', height, borderRadius: 12, overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.6)' }}>
         <MapContainer
           whenCreated={handleMapCreated}
