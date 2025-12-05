@@ -1,0 +1,91 @@
+.landing {
+  padding: 2.4rem 3.2rem 4rem;
+  color: #e5e7eb;
+  background: radial-gradient(circle at top, #0b1120, #020617 45%, #000);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 2.8rem;
+  margin-bottom: 2.6rem;
+}
+
+.hero-badge {
+  padding: 0.35rem 1rem;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.hero-title {
+  font-size: 3rem;
+  margin: 1rem 0 0.6rem;
+}
+
+.accent {
+  color: #2dd4bf;
+}
+
+.hero-subtitle {
+  max-width: 42rem;
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.hero-actions {
+  margin-top: 1.6rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #2dd4bf;
+  color: #020617;
+}
+
+.btn-outline {
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.6);
+  color: #9ca3af;
+}
+
+.hero-tags {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 0.3rem 0.85rem;
+  background: rgba(8, 14, 32, 0.9);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.hero-card {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  padding: 1.8rem;
+  border-radius: 22px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.tagline.highlight {
+  color: #38bdf8; /* soft blue */
+  margin-top: 6px;
+  font-style: italic;
+}
+

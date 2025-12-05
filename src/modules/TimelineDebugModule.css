@@ -1,0 +1,103 @@
+/* src/modules/TimelineDebugModule.css */
+
+.dm-tl-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+}
+
+.dm-tl-panel {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 1.1rem 1.2rem;
+}
+
+.dm-tl-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.3rem;
+}
+
+.dm-tl-text {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 0.7rem;
+}
+
+.dm-tl-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.dm-tl-list li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.dm-tl-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  margin-top: 0.35rem;
+}
+
+.dm-tl-dot.ok {
+  background: #4ade80;
+}
+
+.dm-tl-dot.warn {
+  background: #facc15;
+}
+
+.dm-tl-dot.err {
+  background: #f97373;
+}
+
+.dm-tl-main {
+  font-size: 0.84rem;
+  color: #e5e7eb;
+}
+
+.dm-tl-sub {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+.dm-tl-log-box {
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.95);
+  padding: 0.6rem 0.7rem;
+  font-size: 0.76rem;
+  color: #e5e7eb;
+  margin-bottom: 0.6rem;
+}
+
+.dm-tl-log-line {
+  margin-bottom: 0.2rem;
+}
+
+.dm-tl-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+  color: #020617;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+@media (max-width: 960px) {
+  .dm-tl-layout {
+    grid-template-columns: 1fr;
+  }
+}

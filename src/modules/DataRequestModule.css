@@ -1,0 +1,111 @@
+/* src/modules/DataRequestModule.css */
+
+.dm-req-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+}
+
+.dm-req-panel {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 1.1rem 1.2rem;
+}
+
+.dm-req-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.3rem;
+}
+
+.dm-req-text {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 0.7rem;
+}
+
+.dm-req-field {
+  margin-bottom: 0.6rem;
+}
+
+.dm-req-field label {
+  display: block;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  margin-bottom: 0.2rem;
+}
+
+.dm-req-field select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.82rem;
+}
+
+.dm-req-btn {
+  width: 100%;
+  margin-top: 0.2rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+  color: #020617;
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.6);
+}
+
+.dm-req-note {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.dm-req-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  margin-top: 0.5rem;
+}
+
+.dm-req-table th,
+.dm-req-table td {
+  padding: 0.4rem 0.35rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+}
+
+.dm-req-table th {
+  text-align: left;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.dm-req-table tr:last-child td {
+  border-bottom: none;
+}
+
+.status-pending {
+  color: #facc15;
+}
+
+.status-approved {
+  color: #4ade80;
+}
+
+.status-rejected {
+  color: #f97373;
+}
+
+@media (max-width: 960px) {
+  .dm-req-layout {
+    grid-template-columns: 1fr;
+  }
+}

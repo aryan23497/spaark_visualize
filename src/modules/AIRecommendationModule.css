@@ -1,0 +1,206 @@
+/* src/modules/AIRecommendationModule.css */
+
+.ai-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+}
+
+/* Panels */
+.ai-panel {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 1.1rem 1.2rem;
+}
+
+.ai-panel-left {
+  grid-row: 1 / span 2;
+}
+
+.ai-panel-right-top {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.ai-panel-right-bottom {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Typography */
+.ai-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.3rem;
+}
+
+.ai-text {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 0.8rem;
+}
+
+/* Form section */
+.ai-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  margin-bottom: 0.25rem;
+}
+
+.ai-textarea {
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.82rem;
+  margin-bottom: 0.6rem;
+}
+
+.ai-row {
+  display: flex;
+  gap: 0.7rem;
+  margin-bottom: 0.6rem;
+}
+
+.ai-field {
+  flex: 1;
+}
+
+.ai-select {
+  width: 100%;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+}
+
+.ai-run-btn {
+  margin-top: 0.2rem;
+  padding: 0.5rem 0.9rem;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+  color: #020617;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
+}
+
+.ai-note {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+/* Suggested datasets */
+.ai-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.ai-list li {
+  padding: 0.55rem 0.6rem;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.ai-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 212, 191, 0.8);
+  color: #a5f3fc;
+  margin-bottom: 0.2rem;
+}
+
+.ai-item-title {
+  font-size: 0.85rem;
+  color: #e5e7eb;
+  margin-bottom: 0.1rem;
+}
+
+.ai-item-meta {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+/* Workflows */
+.ai-workflow-grid {
+  margin-top: 0.6rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.7rem;
+}
+
+.ai-workflow-card {
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0.6rem 0.7rem;
+  font-size: 0.8rem;
+  color: #cbd5f5;
+}
+
+.ai-workflow-card h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  color: #e5e7eb;
+}
+
+.ai-workflow-card p {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-bottom: 0.25rem;
+}
+
+.ai-workflow-card ul {
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.ai-workflow-card li {
+  font-size: 0.76rem;
+  color: #a1a7c4;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .ai-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .ai-panel-left {
+    grid-row: auto;
+  }
+
+  .ai-panel-right-top {
+    grid-column: 1;
+  }
+
+  .ai-panel-right-bottom {
+    grid-column: 1;
+  }
+
+  .ai-row {
+    flex-direction: column;
+  }
+}

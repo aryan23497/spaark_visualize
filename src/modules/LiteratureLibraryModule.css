@@ -1,0 +1,93 @@
+/* src/modules/LiteratureLibraryModule.css */
+
+.lit-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+}
+
+.lit-panel {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 1.1rem 1.2rem;
+}
+
+.lit-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.3rem;
+}
+
+.lit-text {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 0.7rem;
+}
+
+.lit-search {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  font-size: 0.82rem;
+  margin-bottom: 0.6rem;
+}
+
+.lit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lit-pill {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 212, 191, 0.7);
+  background: rgba(15, 23, 42, 0.9);
+  color: #a5f3fc;
+  cursor: pointer;
+}
+
+.lit-note {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.lit-card {
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0.6rem 0.7rem;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  margin-bottom: 0.6rem;
+}
+
+.lit-card h4 {
+  margin-bottom: 0.2rem;
+  font-size: 0.9rem;
+}
+
+.lit-meta {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+.lit-tags {
+  font-size: 0.75rem;
+  color: #a5f3fc;
+  margin-top: 0.15rem;
+}
+
+@media (max-width: 960px) {
+  .lit-layout {
+    grid-template-columns: 1fr;
+  }
+}

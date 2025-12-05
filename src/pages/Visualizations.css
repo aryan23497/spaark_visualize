@@ -1,0 +1,134 @@
+.viz-page {
+  padding: 2.4rem 3.2rem 4rem;
+  background: radial-gradient(circle at top, #020617, #000);
+  color: #e5e7eb;
+  min-height: calc(100vh - 80px);
+}
+
+.viz-title {
+  font-size: 2rem;
+  margin-bottom: 0.4rem;
+}
+
+.viz-subtitle {
+  color: #9ca3af;
+  margin-bottom: 1.6rem;
+}
+
+.viz-status {
+  color: #9ca3af;
+}
+
+.viz-error {
+  color: #f97373;
+}
+
+.viz-section {
+  margin-top: 2rem;
+}
+
+.viz-section h2 {
+  margin-bottom: 0.4rem;
+}
+
+.viz-caption {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 0.8rem;
+}
+
+/* Summary cards */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  padding: 1rem;
+  border-radius: 14px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.summary-value {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.summary-value.small {
+  font-size: 0.9rem;
+}
+
+/* Time-series bars */
+
+.timeseries-wrapper {
+  border-radius: 16px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 0.9rem 1rem;
+}
+
+.ts-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 50px;
+  gap: 0.7rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ts-label {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.ts-bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  overflow: hidden;
+}
+
+.ts-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+.ts-value {
+  font-size: 0.85rem;
+}
+
+/* Spatial grid */
+
+.spatial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.9rem;
+}
+
+.spatial-cell {
+  padding: 0.7rem 0.8rem;
+  border-radius: 14px;
+  background: #020617;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+}
+
+.spatial-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.spatial-coord {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}

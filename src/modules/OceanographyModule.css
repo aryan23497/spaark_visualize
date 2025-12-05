@@ -1,0 +1,148 @@
+/* ================== Oceanography Module Layout ================== */
+
+.oceanography-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1.1fr;
+  gap: 1.5rem;
+  margin-top: 1.2rem;
+}
+
+/* ================== Main Info Card ================== */
+
+.oceanography-card {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  padding: 1.2rem 1.3rem;
+}
+
+.oceanography-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.3rem;
+}
+
+.oceanography-subtitle {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 0.8rem;
+}
+
+/* ================== Sub-Areas Chips ================== */
+
+.oceanography-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+.oceanography-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.95);
+  font-size: 0.78rem;
+  color: #e5e7eb;
+}
+
+.oceanography-chip span:first-child {
+  font-size: 0.9rem;
+}
+
+/* ================== Feature List ================== */
+
+.oceanography-list {
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  padding-left: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.oceanography-list li {
+  margin-bottom: 0.3rem;
+}
+
+.oceanography-hint {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* ================== Tools Panel ================== */
+
+.oceanography-tools {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+  margin-bottom: 0.9rem;
+}
+
+.oceanography-tool-card {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.95);
+  padding: 0.65rem 0.75rem;
+}
+
+.oceanography-tool-card h4 {
+  font-size: 0.86rem;
+  color: #e5e7eb;
+  margin-bottom: 0.25rem;
+}
+
+.oceanography-tool-card p {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* ================== Action Buttons ================== */
+
+.oceanography-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.oceanography-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+  color: #020617;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oceanography-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(45, 212, 191, 0.7);
+}
+
+.oceanography-btn-outline {
+  background: transparent;
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  box-shadow: none;
+}
+
+.oceanography-btn-ghost {
+  background: transparent;
+  color: #9ca3af;
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  box-shadow: none;
+}
+
+/* ================== Responsive ================== */
+
+@media (max-width: 960px) {
+  .oceanography-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,246 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-left {
+  flex: 1;
+}
+
+.navbar-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 1.4rem;
+}
+
+.navbar-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Hide login after login */
+.login-hidden {
+  display: none;
+}
+/* hides login after login */
+.login-hidden {
+  display: none;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.profile-wrapper {
+  position: relative;
+}
+
+.profile-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: radial-gradient(circle at top, #5eead4, #0f172a);
+  color: #020617;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.8);
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 42px;
+  min-width: 210px;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 12px;
+  padding: 0.4rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+}
+
+.profile-header {
+  padding: 0.3rem 0.6rem 0.4rem;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.7);
+  margin-bottom: 0.3rem;
+}
+
+.profile-email {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  word-break: break-all;
+  margin: 0;
+}
+
+.profile-role {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin: 0.1rem 0 0;
+}
+
+.profile-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.profile-item:hover {
+  background: rgba(148, 163, 184, 0.18);
+}
+
+.profile-divider {
+  height: 1px;
+  background: rgba(55, 65, 81, 0.8);
+  margin: 0.35rem 0;
+}
+
+.profile-item.logout {
+  color: #fca5a5;
+}
+/* ============================= */
+/* PREMIUM PROFILE ICON */
+/* ============================= */
+
+.profile-wrapper {
+  position: relative;
+}
+
+.profile-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(45, 212, 191, 0.95),
+    rgba(14, 165, 233, 0.9)
+  );
+  color: #020617;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* glass + glow */
+  box-shadow:
+    0 0 8px rgba(45, 212, 191, 0.7),
+    0 0 18px rgba(14, 165, 233, 0.5),
+    inset 0 0 8px rgba(255, 255, 255, 0.3);
+
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 12px rgba(45, 212, 191, 0.9),
+    0 0 28px rgba(14, 165, 233, 0.7),
+    inset 0 0 14px rgba(255, 255, 255, 0.35);
+}
+
+/* ============================= */
+/* DROPDOWN */
+/* ============================= */
+
+.profile-dropdown {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  width: 230px;
+  background: rgba(2, 6, 23, 0.92);
+  border-radius: 14px;
+  border: 1px solid rgba(45, 212, 191, 0.45);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.65),
+    0 0 18px rgba(45, 212, 191, 0.35);
+  padding: 0.8rem;
+  z-index: 999;
+  animation: fadeInScale 0.25s ease;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* header inside dropdown */
+.profile-header {
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.profile-email {
+  font-size: 0.82rem;
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.profile-role {
+  font-size: 0.72rem;
+  color: #2dd4bf;
+  text-transform: uppercase;
+}
+
+/* menu items */
+.profile-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  padding: 0.55rem 0.6rem;
+  font-size: 0.82rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.profile-item:hover {
+  background: rgba(45, 212, 191, 0.15);
+  color: #2dd4bf;
+}
+
+.profile-divider {
+  height: 1px;
+  background: rgba(148, 163, 184, 0.25);
+  margin: 0.5rem 0;
+}
+
+/* logout highlight */
+.profile-item.logout {
+  color: #f87171;
+}
+
+.profile-item.logout:hover {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+}

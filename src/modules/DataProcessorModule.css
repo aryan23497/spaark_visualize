@@ -1,0 +1,83 @@
+/* src/modules/DataProcessorModule.css */
+
+.proc-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+}
+
+.proc-panel {
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 1.1rem 1.2rem;
+}
+
+.proc-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.3rem;
+}
+
+.proc-text {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 0.7rem;
+}
+
+.proc-templates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.7rem;
+}
+
+.proc-card {
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0.6rem 0.7rem;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+.proc-card h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.proc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+.proc-table th,
+.proc-table td {
+  padding: 0.4rem 0.35rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+}
+
+.proc-table th {
+  text-align: left;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.proc-table tr:last-child td {
+  border-bottom: none;
+}
+
+.proc-table .ok {
+  color: #4ade80;
+}
+
+.proc-table .run {
+  color: #38bdf8;
+}
+
+.proc-table .warn {
+  color: #facc15;
+}
