@@ -1,67 +1,86 @@
 // src/modules/VisualizationTool.js
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import "./VisualizationTool.css";
 import VisualizationParametersPanel from "./VisualizationParametersPanel";
 import axios from "axios";
 
-/* Chart imports */
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-/* register basic Chart.js components */
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+/**
+ * VisualizationTool
+ *
+ * - Requests a plot image from your backend /ocean/plot endpoint.
+ * - Attempts POST (JSON) first. If server replies 405, retries GET with query params.
+ * - Sends selected plot type (line | bubble | scatter) to backend in both body and query params.
+ * - Displays returned image (PNG/JPEG) as an object URL in an <img>.
+ *
+ * NOTE: If your backend requires authentication or special headers, add them in axios config.
+ */
 
 const VisualizationTool = () => {
   // -----------------------------
-  // STATES
+  // State
   // -----------------------------
   const [timeRange, setTimeRange] = useState("last7");
   const [time1, setTime1] = useState("");
   const [time2, setTime2] = useState("");
-
-  // vizParams: updated by the VisualizationParametersPanel via handleVizParamsChange
   const [vizParams, setVizParams] = useState({
     independentVariable: "Time",
     parameters: ["SST"],
   });
 
-  // hold visualization data returned from the backend
-  const [vizData, setVizData] = useState(null);
+  // NEW: plotType state (line | bubble | scatter)
+  const [plotType, setPlotType] = useState("line");
 
-  // Callback when panel changes selections
-  const handleVizParamsChange = (payload) => {
-    setVizParams(payload);
-  };
+  const [imageUrl, setImageUrl] = useState(null); // object URL created from blob
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // useRef for AbortController and mounted flag
+  const controllerRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      // cleanup AbortController if any
+      if (controllerRef.current) {
+        try {
+          controllerRef.current.abort();
+        } catch (e) {}
+      }
+      // revoke object URL if present
+      if (imageUrl) {
+        try {
+          URL.revokeObjectURL(imageUrl);
+        } catch (e) {}
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // run once on mount/unmount
 
   // -----------------------------
   // Date helpers
   // -----------------------------
-  const toDDMMYYYY = (d) => {
+  const toDDMMYYYY = useCallback((d) => {
     const dt = new Date(d);
     const yyyy = dt.getFullYear();
     const mm = String(dt.getMonth() + 1).padStart(2, "0");
     const dd = String(dt.getDate()).padStart(2, "0");
     return `${dd}/${mm}/${yyyy}`;
-  };
-
-  const setLastNDays = useCallback((n) => {
-    const now = new Date();
-    const endStr = toDDMMYYYY(now);
-    const start = new Date(now);
-    start.setDate(start.getDate() - n);
-    const startStr = toDDMMYYYY(start);
-    setTime1(startStr);
-    setTime2(endStr);
   }, []);
+
+  const setLastNDays = useCallback(
+    (n) => {
+      const now = new Date();
+      const endStr = toDDMMYYYY(now);
+      const start = new Date(now);
+      start.setDate(start.getDate() - n);
+      const startStr = toDDMMYYYY(start);
+      setTime1(startStr);
+      setTime2(endStr);
+    },
+    [toDDMMYYYY]
+  );
 
   useEffect(() => {
     if (timeRange === "last7") setLastNDays(7);
@@ -70,173 +89,206 @@ const VisualizationTool = () => {
       if (!time1) setTime1(toDDMMYYYY(new Date()));
       if (!time2) setTime2(toDDMMYYYY(new Date()));
     }
-  }, [timeRange, setLastNDays]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [timeRange, time1, time2, setLastNDays, toDDMMYYYY]);
 
   useEffect(() => {
+    // init default
     setLastNDays(7);
   }, [setLastNDays]);
 
-  // -----------------------------
-  // Convert dd/mm/yyyy -> yyyy-mm-dd for backend
-  // -----------------------------
-  const toYYYYMMDD = (ddmmyyyy) => {
+  const toYYYYMMDD = useCallback((ddmmyyyy) => {
     if (!ddmmyyyy) return "";
     const parts = ddmmyyyy.split("/");
     if (parts.length !== 3) return ddmmyyyy;
     const [dd, mm, yyyy] = parts;
     return `${yyyy}-${mm}-${dd}`;
-  };
+  }, []);
 
   // -----------------------------
-  // Field mapping UI -> backend
+  // Field mapping (UI -> backend)
+  // NOTE: Time maps to 'datetime' to match your curl example
   // -----------------------------
-  const fieldMap = {
-    Time: "time",
-    Latitude: "lat",
-    Longitude: "lon",
-    DIC: "dic",
-    MCO: "mco",
-    PCO2_ORIGINAL: "pco2_original",
-    CHL: "chl",
-    NO3: "no3",
-    SSS: "sss",
-    SST: "sst",
-    DEVIANT_UNCERTAINTY: "deviant_uncertainty",
-  };
+  const fieldMap = useMemo(
+    () => ({
+      Time: "datetime",                // <--- changed to 'datetime' to match API
+      Latitude: "lat",
+      Longitude: "lon",
+      DIC: "dic",
+      MLD: "mld",
+      PCO2_ORIGINAL: "pco2_original",
+      CHL: "chl",
+      NO3: "no3",
+      SSS: "sss",
+      SST: "sst",
+      DEVIANT_UNCERTAINTY: "deviant_uncertainty",
+    }),
+    []
+  );
 
-  // -----------------------------
-  // Apply: send payload to backend via Axios
-  // -----------------------------
-  const handleApply = async () => {
-    try {
-      const { independentVariable, parameters } = vizParams || {};
-      if (!parameters || parameters.length === 0) {
-        alert("Select at least one Y parameter.");
-        return;
-      }
-
-      const start_date = toYYYYMMDD(time1);
-      const end_date = toYYYYMMDD(time2);
-
-      const x_axis = fieldMap[independentVariable] || independentVariable;
-      const y_axes = parameters.map((p) => fieldMap[p] || p);
-
-      const payload = {
-        start_date,
-        end_date,
-        time_range: timeRange,
-        x_axis,
-        y_axes,
-        x_label: independentVariable,
-        y_labels: parameters,
-      };
-
-      console.log("Sending visualization payload:", payload);
-
-      // adjust URL to your backend endpoint
-      const backendUrl = "http://localhost:8000/api/visualize";
-
-      const response = await axios.post(backendUrl, payload, {
-        headers: { "Content-Type": "application/json" },
-        timeout: 30000,
-      });
-
-      console.log("Backend response:", response.data);
-
-      if (response?.data?.status === "ok") {
-        const data = response.data.payload;
-        // STORE the returned visualization data so the left panel can render it
-        setVizData(data);
-        console.log("Visualization data saved to state:", data);
-      } else {
-        console.warn("Unexpected backend response:", response.data);
-        alert("Server returned unexpected response. See console for details.");
-      }
-    } catch (err) {
-      console.error("Apply failed:", err);
-      if (err.response) {
-        alert(`Server error ${err.response.status}: ${err.response.data?.error || err.response.statusText}`);
-      } else if (err.request) {
-        alert("No response from server. Is the backend running at http://localhost:8000?");
-      } else {
-        alert(`Request failed: ${err.message}`);
-      }
-    }
-  };
+  // stable x/y options
+  const xOptions = useMemo(() => ["Latitude", "Longitude", "Time"], []);
+  const yOptions = useMemo(
+    () => ["DIC", "MLD", "PCO2_ORIGINAL", "CHL", "NO3", "SSS", "SST", "DEVIANT_UNCERTAINTY"],
+    []
+  );
+  const initialY = useMemo(() => ["SST"], []);
 
   // -----------------------------
-  // X and Y option lists (explicit)
+  // Viz params change handler
   // -----------------------------
-  const xOptions = ["Latitude", "Longitude", "Time"];
-  const yOptions = [
-    "DIC",
-    "MCO",
-    "PCO2_ORIGINAL",
-    "CHL",
-    "NO3",
-    "SSS",
-    "SST",
-    "DEVIANT_UNCERTAINTY",
-  ];
-
-  // -----------------------------
-  // Chart data preparation
-  // -----------------------------
-  const makeChartData = (vizData) => {
-    // vizData expected shape: { x: [...], series: [{ name, label, values: [...] }, ...] }
-    if (!vizData || !Array.isArray(vizData.x) || !Array.isArray(vizData.series)) return null;
-
-    const labels = vizData.x.map(String); // x axis labels
-
-    // color palette (small set)
-    const palette = [
-      "#34d399", // green
-      "#60a5fa", // blue
-      "#f97316", // orange
-      "#f43f5e", // red
-      "#a78bfa", // purple
-      "#f59e0b", // amber
-      "#06b6d4", // teal
-      "#94a3b8", // gray
-    ];
-
-    const datasets = vizData.series.map((s, idx) => {
-      // if values length doesn't match labels, trim/pad
-      const values = Array.isArray(s.values) ? s.values : [];
-      const data = labels.map((_, i) => (i < values.length ? values[i] : null));
-      return {
-        label: s.label || s.name || `series ${idx + 1}`,
-        data,
-        borderColor: palette[idx % palette.length],
-        backgroundColor: palette[idx % palette.length],
-        tension: 0.2,
-        fill: false,
-        pointRadius: 3,
-      };
+  const handleVizParamsChange = useCallback((payload) => {
+    // shallow compare to avoid unnecessary updates
+    setVizParams((prev) => {
+      try {
+        if (JSON.stringify(prev) === JSON.stringify(payload)) return prev;
+      } catch (e) {}
+      return payload;
     });
-
-    return { labels, datasets };
-  };
-
-  const chartData = makeChartData(vizData);
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: false, text: "Visualization" },
-      tooltip: { mode: "index", intersect: false },
-    },
-    interaction: { mode: "nearest", intersect: false },
-    scales: {
-      x: { display: true, title: { display: true, text: vizParams.independentVariable } },
-      y: { display: true, title: { display: true, text: "Value" } },
-    },
-  };
+  }, []);
 
   // -----------------------------
-  // UI / JSX
+  // Helper: build POST body and GET params
+  // -----------------------------
+  const buildPayloadAndParams = useCallback(() => {
+    const parameters = vizParams?.parameters || [];
+    const start_date = toYYYYMMDD(time1);
+    const end_date = toYYYYMMDD(time2);
+    const x_axis = fieldMap[vizParams.independentVariable] || vizParams.independentVariable;
+    const y_axes = parameters.map((p) => fieldMap[p] || p);
+
+    const body = {
+      start_date,
+      end_date,
+      time_range: timeRange,
+      x_axis,
+      y_axes,
+      x_label: vizParams.independentVariable,
+      y_labels: parameters,
+      plot_type: plotType, // include chosen plot type in POST body
+      // add any other fields your backend expects
+    };
+
+    const params = {
+      start_date,
+      end_date,
+      // include plot_type as query param too (GET fallback)
+      plot_type: plotType,
+      x: x_axis,
+      y: y_axes.length ? y_axes[0] : "", // if you want multiple y's, backend must accept comma separated y's
+      format: "png",
+    };
+
+    return { body, params };
+  }, [vizParams, time1, time2, timeRange, fieldMap, toYYYYMMDD, plotType]);
+
+  // -----------------------------
+  // Apply: request image from backend
+  // -----------------------------
+  const handleApply = useCallback(async () => {
+    setError(null);
+
+    const parameters = vizParams?.parameters || [];
+    if (!parameters || parameters.length === 0) {
+      setError(new Error("Select at least one Y parameter."));
+      return;
+    }
+
+    // revoke any prior object URL
+    if (imageUrl) {
+      try {
+        URL.revokeObjectURL(imageUrl);
+      } catch (e) {}
+      setImageUrl(null);
+    }
+
+    setLoading(true);
+
+    // Replace with your actual backend URL (shown in your API docs screenshot)
+    const backendUrl = "http://192.168.137.121:8000/ocean/plot";
+
+    // build payloads
+    const { body, params } = buildPayloadAndParams();
+
+    // Prepare AbortController so we can cancel if needed
+    if (controllerRef.current) {
+      // abort any previous running request
+      try {
+        controllerRef.current.abort();
+      } catch (e) {}
+    }
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    try {
+      // Attempt POST first (preferred for JSON payloads)
+      const postConfig = {
+        responseType: "blob", // we expect an image
+        timeout: 45000,
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "image/png, image/jpeg, application/octet-stream",
+        },
+      };
+
+      let resp;
+      try {
+        resp = await axios.post(backendUrl, body, postConfig);
+      } catch (postErr) {
+        // if 405 (method not allowed) -> try GET fallback
+        if (postErr?.response?.status === 405) {
+          // fallback to GET with params (plot_type included in params)
+          const getConfig = {
+            responseType: "blob",
+            timeout: 45000,
+            signal: controller.signal,
+            headers: { Accept: "image/png, image/jpeg, application/octet-stream" },
+            params,
+          };
+          resp = await axios.get(backendUrl, getConfig);
+        } else {
+          // rethrow to outer catch
+          throw postErr;
+        }
+      }
+
+      // If we get here, resp should be a blob
+      if (!mountedRef.current) return;
+
+      const blob = resp?.data;
+      if (!blob) {
+        throw new Error("No binary data received from server.");
+      }
+
+      const url = URL.createObjectURL(blob);
+      setImageUrl(url);
+      setError(null);
+    } catch (err) {
+      if (!mountedRef.current) return;
+      if (axios.isCancel?.(err)) {
+        console.log("Request cancelled");
+        // don't set error for user cancellation
+      } else {
+        console.error("Failed to fetch image:", err);
+        // Helpful error messages for common problems
+        if (err.response) {
+          // server returned a response (non-2xx)
+          setError(new Error(`Server returned ${err.response.status}: ${err.response.statusText}`));
+        } else if (err.request) {
+          // request made but no response
+          setError(new Error("No response from server. Confirm backend is running and CORS is allowed."));
+        } else {
+          // other error
+          setError(new Error(err.message || "Unknown error"));
+        }
+      }
+    } finally {
+      if (mountedRef.current) setLoading(false);
+    }
+  }, [vizParams, imageUrl, buildPayloadAndParams]);
+
+  // -----------------------------
+  // JSX
   // -----------------------------
   return (
     <div className="viz-layout reverse-layout">
@@ -244,8 +296,7 @@ const VisualizationTool = () => {
       <section className="viz-panel viz-panel-left">
         <h3 className="viz-panel-title">Data & Filters</h3>
         <p className="viz-panel-text">
-          Select domain, region and time window to explore oceanographic,
-          fisheries and biodiversity patterns.
+          Select domain, region, time window and plot type to request a plot image from the backend.
         </p>
 
         <div className="viz-form-group">
@@ -303,64 +354,93 @@ const VisualizationTool = () => {
           </>
         )}
 
+        {/* NEW: Plot Type dropdown */}
+        <div className="viz-form-group">
+          <label>Plot Type</label>
+          <select value={plotType} onChange={(e) => setPlotType(e.target.value)}>
+            <option value="line">Line</option>
+            <option value="bubble">Bubble</option>
+            <option value="scatter">Scatter</option>
+          </select>
+          <small style={{ color: "#9fb4d8", display: "block", marginTop: 6 }}>
+            Selected plot type is sent to backend as <code>plot_type</code>.
+          </small>
+        </div>
+
         <div style={{ marginTop: 18 }}>
           <VisualizationParametersPanel
             xOptions={xOptions}
             yOptions={yOptions}
             initialX="Time"
-            initialY={["SST"]}
+            initialY={initialY}
             onChange={handleVizParamsChange}
           />
         </div>
 
-        <button type="button" className="viz-apply-btn" onClick={handleApply}>
-          Apply Filters
+        <button
+          type="button"
+          className="viz-apply-btn"
+          onClick={handleApply}
+          disabled={loading}
+        >
+          {loading ? "Generating image…" : "Apply Filters"}
         </button>
+
+        {error && (
+          <div className="viz-error" style={{ marginTop: 12, color: "#ffbdbd" }}>
+            {error.message || "Failed to generate image. See console."}
+          </div>
+        )}
       </section>
 
-      {/* LEFT: MAP / SPATIAL VIEW */}
+      {/* LEFT: IMAGE / MAP VIEW */}
       <section className="viz-panel viz-panel-main">
         <div className="viz-panel-header">
           <div>
-            <h3 className="viz-panel-title">Map / Spatial View</h3>
+            <h3 className="viz-panel-title">Map / Plot View</h3>
             <p className="viz-panel-text">
-              Placeholder for interactive map or 2D spatial viewer. This will
-              connect to your FastAPI backend later and render real layers.
+              The backend will return a plot image (PNG/JPEG). It will be displayed
+              here when ready.
             </p>
           </div>
         </div>
 
-        <div className="viz-map-placeholder">
-          <div className="viz-map-grid-overlay" />
-          {/* CONDITIONAL: show placeholder when no vizData, else show chart */}
-          {!vizData ? (
-            <>
-              <p>Spatial visualization canvas</p>
-              <span>EEZ · Cruises · Stations · eDNA sites</span>
-            </>
-          ) : chartData ? (
-            <div style={{ width: "100%", height: 420, padding: 12 }}>
-              <div style={{ marginBottom: 8, color: "#cbd5e1" }}>
-                Visualization loaded from API — preview:
-              </div>
-              <div style={{ width: "100%", height: 360 }}>
-                <Line data={chartData} options={chartOptions} />
-              </div>
-            </div>
+        <div
+          className="viz-map-placeholder"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: 360,
+          }}
+        >
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="Generated plot"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "640px",
+                objectFit: "contain",
+                borderRadius: 8,
+                boxShadow: "0 6px 20px rgba(2,6,23,0.6)",
+              }}
+            />
+          ) : loading ? (
+            <div style={{ color: "#9fb4d8" }}>Generating image…</div>
           ) : (
-            // fallback if chartData couldn't be built
-            <pre style={{ color: "#e6f3ff", padding: 12 }}>{JSON.stringify(vizData, null, 2)}</pre>
+            <div style={{ textAlign: "center", color: "#9fb4d8" }}>
+              <p style={{ marginBottom: 6 }}>Spatial visualization / plot will appear here</p>
+              <small>Click "Apply Filters" to request a plot image from the backend.</small>
+            </div>
           )}
         </div>
       </section>
 
-      {/* BOTTOM: METRICS / TIME SERIES */}
+      {/* BOTTOM: METRICS */}
       <section className="viz-panel viz-panel-bottom">
         <h3 className="viz-panel-title">Time Series & Indicators</h3>
-        <p className="viz-panel-text">
-          Quick overview of key indicators for the selected region and time
-          window. Later you can replace these cards with real charts.
-        </p>
+        <p className="viz-panel-text">Summary metrics (static placeholders)</p>
 
         <div className="viz-metrics-grid">
           <div className="viz-metric-card">
@@ -372,16 +452,6 @@ const VisualizationTool = () => {
             <p className="viz-metric-label">Chl-a (mg/m³)</p>
             <p className="viz-metric-value">0.8</p>
             <p className="viz-metric-note">Elevated coastal bloom.</p>
-          </div>
-          <div className="viz-metric-card">
-            <p className="viz-metric-label">CPUE Index</p>
-            <p className="viz-metric-value">+12%</p>
-            <p className="viz-metric-note">Above seasonal average.</p>
-          </div>
-          <div className="viz-metric-card">
-            <p className="viz-metric-label">eDNA Hits</p>
-            <p className="viz-metric-value">34</p>
-            <p className="viz-metric-note">Species detections in the last month.</p>
           </div>
         </div>
       </section>

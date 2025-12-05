@@ -1,0 +1,4 @@
+trip_id,fare,canceled
+t1,120,False
+t2,0,True
+t3,90,False
